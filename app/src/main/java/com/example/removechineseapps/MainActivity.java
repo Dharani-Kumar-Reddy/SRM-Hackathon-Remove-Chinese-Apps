@@ -3,11 +3,16 @@ package com.example.removechineseapps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -22,36 +27,72 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
+    int size=100000;//for handling async task
+    Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context=this;
         setContentView(R.layout.activity_main);
 
-
-
-
-
     }
+
+
     public void scan(View v){
+        final ProgressDialog progressDoalog = new ProgressDialog(MainActivity.this);
+        progressDoalog.setMessage("Its loading....");
+        progressDoalog.setTitle("Scanning Your device");
+        progressDoalog.show();
         //get data and check for each app in device
-        List<App> appList=getPackages();
-        //pass the above list to recycler view below
-
-
-    }
-    private List<App> getPackages(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("Apps");
+        DatabaseReference myRef = database.getReference();
 
-        List<App> apps_to_be_removed=new ArrayList<>();
+        Log.i("status","starting size");
+
+        myRef.child("length").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                size=Integer.parseInt(snapshot.getValue(String.class));
+                Log.i("status","size obtained"+size);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        Log.i("status","getting list");
+
+        final List<App> apps_to_be_removed=new ArrayList<>();
         final List<App> apps_list=new ArrayList<>();
-        myRef.addChildEventListener(new ChildEventListener() {
+
+
+        myRef.child("Apps").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 App app_obj = snapshot.getValue(App.class);
                 apps_list.add(app_obj);
                 Log.i("Name",Integer.toString(apps_list.size()));
+                if(isAppPresent(app_obj.getApp_package())){
+                    apps_to_be_removed.add(app_obj);
+                    Log.i("status_appsremoved",Integer.toString(apps_list.size()));
+                }
+                Log.i("status","obj obtained");
+                Log.i("status_apps_size",Integer.toString(apps_list.size()));
+                if(apps_list.size()==size){
+
+
+                    RecyclerView recyclerView=findViewById(R.id.recycler);
+                    //pass app_to_be_removed publishing
+                    MyGridAdapter adapter=new MyGridAdapter(apps_list,context);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.setLayoutManager(new GridLayoutManager(context,2));
+                    Log.i("status","list obtained");
+
+                    progressDoalog.dismiss();
+                }
 
             }
 
@@ -75,13 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        for(int pos=0;pos<apps_list.size();pos++){
-            App obj=apps_list.get(pos);
-            if(isAppPresent(obj.getApp_package())){
-                apps_to_be_removed.add(obj);
-            }
-        }
-        return apps_to_be_removed;
     }
 
     private Boolean isAppPresent(String uri){
@@ -89,7 +123,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
                 return true;
-            } catch (PackageManager.NameNotFoundException e) {
+            }
+            catch (PackageManager.NameNotFoundException e) {
             }
 
             return false;
