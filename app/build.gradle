@@ -35,5 +35,11 @@ dependencies {
     //Firebase setup
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation 'com.google.firebase:firebase-database:19.3.1'
+    implementation 'com.firebaseui:firebase-ui-database:6.2.1'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'com.android.support:recyclerview-v7:29.0.0'
 
 }
