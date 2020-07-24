@@ -3,16 +3,22 @@ package com.example.removechineseapps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+
+import android.widget.Adapter;
+
 import android.widget.Toast;
 
 import com.example.removechineseapps.Adapter.appAdapter1;
@@ -32,98 +38,81 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private static final String TAG = "MainActivity";
 
-    private DatabaseReference AppRef;
-    private List<App> appList;
+
+    int size=100000;//for handling async task
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context=this;
         setContentView(R.layout.activity_main);
         AppRef= FirebaseDatabase.getInstance().getReference().child("Apps");
         appList=new ArrayList<>();
         getPackages();
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+
+    }
+
+
+    public void scan(View v){
+        final ProgressDialog progressDoalog = new ProgressDialog(MainActivity.this);
+        progressDoalog.setMessage("Its loading....");
+        progressDoalog.setTitle("Scanning Your device");
+        progressDoalog.show();
+        //get data and check for each app in device
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+
+        Log.i("status","starting size");
+
+        myRef.child("length").addValueEventListener(new ValueEventListener() {
             @Override
-            public void run() {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                size=Integer.parseInt(snapshot.getValue(String.class));
+                Log.i("status","size obtained"+size);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
 
             }
-        }, 20000);
-        check(appList);
-        Log.i("Showing" , Integer.toString(appList.size()));
-        mRecyclerView=findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager=new LinearLayoutManager(this);
-        mAdapter=new appAdapter1(appList);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        });
 
+        Log.i("status","getting list");
 
-    }
-
-    private void check(List<App> appList) {
-
-        Log.i("Showing", Integer.toString(appList.size()));
-        for(int pos=0;pos<appList.size();pos++) {
-            App obj = appList.get(pos);
-            Log.i("Showing" + obj.getApp_name(), Integer.toString(appList.size()));
-
-        }
-    }
-
-
-
-   /* private void add_listner(List<App> appList) {
-
-        FirebaseRecyclerOptions<App> options=
-                new FirebaseRecyclerOptions.Builder<App>()
-                        .setQuery(AppRef,App.class)
-                        .build();
-
-        FirebaseRecyclerAdapter<App, AppViewHolder> adapter=
-                new FirebaseRecyclerAdapter<App, AppViewHolder>(options) {
-                    @Override
-                    protected void onBindViewHolder(@NonNull AppViewHolder holder, int position, @NonNull App model) {
-                        holder.txtAppName.setText(model.getApp_name());
-                        holder.txtAppPackage.setText(model.getApp_package());
-
-                        Picasso.get().load(model.getApp_logo()).into(holder.appLogo);
-
-                    }
-
-                    @NonNull
-                    @Override
-                    public AppViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.app_layout,parent,false);
-                        AppViewHolder holder=new AppViewHolder(view);
-                        return holder;
-                    };
-                };
-        recyclerView.setAdapter(adapter);
-        adapter.startListening();
-    } */
-
-    private  void getPackages(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Apps");
-
-        List<App> apps_to_be_removed=new ArrayList<>();
+        final List<App> apps_to_be_removed=new ArrayList<>();
         final List<App> apps_list=new ArrayList<>();
 
-        myRef.addChildEventListener(new ChildEventListener() {
+
+
+        myRef.child("Apps").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 App app_obj = snapshot.getValue(App.class);
-
-                Log.i("Name"+ app_obj.getApp_name(),Integer.toString(appList.size()));
+                apps_list.add(app_obj);
+                Log.i("Name",Integer.toString(apps_list.size()));
                 if(isAppPresent(app_obj.getApp_package())){
-                    appList.add(app_obj);
-                    Log.i("Remove"+app_obj.getApp_name(),Integer.toString(appList.size()));
+                    apps_to_be_removed.add(app_obj);
+                    Log.i("status_appsremoved",Integer.toString(apps_list.size()));
+                }
+                Log.i("status","obj obtained");
+                Log.i("status_apps_size",Integer.toString(apps_list.size()));
+                if(apps_list.size()==size){
+
+
+                    RecyclerView recyclerView=findViewById(R.id.recycler);
+                    //pass app_to_be_removed publishing
+                    MyGridAdapter adapter=new MyGridAdapter(apps_list,context);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.setLayoutManager(new GridLayoutManager(context,3));
+                    Log.i("status","list obtained");
+
+                    progressDoalog.dismiss();
+
                 }
 
 
@@ -149,14 +138,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-       /* for(int pos=0;pos<apps_list.size();pos++){
-            App obj=apps_list.get(pos);
-            Log.i("Name"+ obj.getApp_name(),Integer.toString(apps_list.size()));
-            if(isAppPresent(obj.getApp_package())){
-                apps_to_be_removed.add(obj);
-                Log.i("Remove"+ obj.getApp_name(),Integer.toString(apps_list.size()));
-            }
-        }*/
+
+        v.findViewById(R.id.btn_scan).setVisibility(View.INVISIBLE);
 
     }
 
@@ -165,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
                 return true;
-            } catch (PackageManager.NameNotFoundException e) {
+            }
+            catch (PackageManager.NameNotFoundException e) {
             }
 
             return false;
