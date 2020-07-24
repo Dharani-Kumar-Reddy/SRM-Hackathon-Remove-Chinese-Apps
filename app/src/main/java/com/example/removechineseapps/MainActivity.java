@@ -3,37 +3,55 @@ package com.example.removechineseapps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.recyclerview.widget.GridLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+
 import android.widget.Adapter;
+
 import android.widget.Toast;
 
+import com.example.removechineseapps.Adapter.appAdapter1;
+import com.example.removechineseapps.App;
+import com.example.removechineseapps.ViewHolder.AppViewHolder;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+
     int size=100000;//for handling async task
     Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context=this;
         setContentView(R.layout.activity_main);
+        AppRef= FirebaseDatabase.getInstance().getReference().child("Apps");
+        appList=new ArrayList<>();
+        getPackages();
+
 
     }
 
@@ -59,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+
             }
         });
 
@@ -66,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         final List<App> apps_to_be_removed=new ArrayList<>();
         final List<App> apps_list=new ArrayList<>();
+
 
 
         myRef.child("Apps").addChildEventListener(new ChildEventListener() {
@@ -95,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
 
+
             }
 
             @Override
@@ -117,7 +138,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
         v.findViewById(R.id.btn_scan).setVisibility(View.INVISIBLE);
+
     }
 
     private Boolean isAppPresent(String uri){

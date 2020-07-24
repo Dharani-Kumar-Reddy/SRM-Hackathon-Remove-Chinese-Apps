@@ -37,4 +37,5 @@ public class App {
     public String getApp_package() {
         return app_package;
     }
+
 }
