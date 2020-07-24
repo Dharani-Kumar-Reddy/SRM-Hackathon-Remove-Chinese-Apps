@@ -13,11 +13,12 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
+        android:id="@+id/btn_scan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/recycler"
         android:text="Scan Now"
-        android:onClick="scan">
+        android:onClick="scan"
+        android:layout_centerInParent="true">
 
     </Button>
 

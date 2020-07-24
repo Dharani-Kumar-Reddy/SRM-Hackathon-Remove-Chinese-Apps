@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="3dp">
+        android:padding="3dp"
+        android:gravity="center">
         <ImageView
             android:id="@+id/app_icon_field"
             android:layout_width="match_parent"
@@ -23,14 +24,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Dummy app">
+            android:text="Dummy app"
+            android:textStyle="bold">
 
         </TextView>
         <Button
             android:id="@+id/btn_uninstall"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Uninstall">
+            android:text="Uninstall"
+            android:textSize="12sp">
 
         </Button>
     </LinearLayout>

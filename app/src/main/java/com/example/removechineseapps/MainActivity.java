@@ -88,10 +88,11 @@ public class MainActivity extends AppCompatActivity {
                     MyGridAdapter adapter=new MyGridAdapter(apps_list,context);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setAdapter(adapter);
-                    recyclerView.setLayoutManager(new GridLayoutManager(context,2));
+                    recyclerView.setLayoutManager(new GridLayoutManager(context,3));
                     Log.i("status","list obtained");
 
                     progressDoalog.dismiss();
+
                 }
 
             }
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        v.findViewById(R.id.btn_scan).setVisibility(View.INVISIBLE);
     }
 
     private Boolean isAppPresent(String uri){

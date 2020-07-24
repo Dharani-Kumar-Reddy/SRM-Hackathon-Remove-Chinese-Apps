@@ -41,18 +41,8 @@ public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder
         holder.textView.setText(obj.getApp_name());
         //add image resourec
 
-        /*Bitmap bmp = null;
-        try {
-        URL url = new URL(obj.getApp_logo());
-        bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        holder.imageView.setImageBitmap(bmp);*/
+        Picasso.get().load(obj.getApp_logo()).placeholder(R.drawable.loading).into(holder.imageView);
 
-        Picasso.get().load(obj.getApp_logo()).into(holder.imageView);
-
-        holder.imageView.setImageResource(R.drawable.loading);
         //onclick listener
         holder.btn.setOnClickListener(new View.OnClickListener() {
             @Override
