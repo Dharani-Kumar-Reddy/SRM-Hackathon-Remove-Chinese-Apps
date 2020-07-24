@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -27,8 +29,11 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    final List<App> apps_to_be_removed=new ArrayList<>();
+    final List<App> apps_list=new ArrayList<>();
     int size=100000;//for handling async task
     Context context;
+    Button btn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +41,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("lifecycle_test","resume");
+        for(int i=0;i<apps_to_be_removed.size();i++){
+            if(!isAppPresent(apps_to_be_removed.get(i).getApp_package())){
+                apps_to_be_removed.remove(i);
+            }
+        }
 
+            RecyclerView recyclerView=findViewById(R.id.recycler);
+            //pass app_to_be_removed publishing
+            MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new GridLayoutManager(context,3));
+            Log.i("status","list obtained");
+
+
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     public void scan(View v){
         final ProgressDialog progressDoalog = new ProgressDialog(MainActivity.this);
@@ -64,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("status","getting list");
 
-        final List<App> apps_to_be_removed=new ArrayList<>();
-        final List<App> apps_list=new ArrayList<>();
+
+
 
 
         myRef.child("Apps").addChildEventListener(new ChildEventListener() {
@@ -85,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
                     RecyclerView recyclerView=findViewById(R.id.recycler);
                     //pass app_to_be_removed publishing
-                    MyGridAdapter adapter=new MyGridAdapter(apps_list,context);
+                    MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new GridLayoutManager(context,3));
@@ -119,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         });
         v.findViewById(R.id.btn_scan).setVisibility(View.INVISIBLE);
     }
+
 
     private Boolean isAppPresent(String uri){
             PackageManager pm = getPackageManager();

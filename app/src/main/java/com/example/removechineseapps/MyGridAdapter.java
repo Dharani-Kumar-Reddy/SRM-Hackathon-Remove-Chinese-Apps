@@ -1,7 +1,11 @@
 package com.example.removechineseapps;
 
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInstaller;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +22,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+
 public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder> {
+    static final int REQUEST_INSTALL = 1;
+    static final int REQUEST_UNINSTALL = 2;
     private List<App> list;
     private Context context;
     public MyGridAdapter(List<App> list, Context context){
@@ -36,7 +43,7 @@ public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final App obj=list.get(position);
         holder.textView.setText(obj.getApp_name());
         //add image resourec
@@ -49,12 +56,24 @@ public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_DELETE);
                 intent.setData(Uri.parse("package:"+obj.getApp_package()));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
+
+                Log.i("lifecycle_test","CHECK FROM HERE");
+                //code to remove from recycler view
+                /*int newPosition = holder.getAdapterPosition();
+                list.remove(newPosition);
+                notifyItemRemoved(newPosition);
+                notifyItemRangeChanged(newPosition, list.size());*/
+
             }
         });
-        Log.i("INside adapter","inside3");
+
+
+
 
     }
+
 
     @Override
     public int getItemCount() {
