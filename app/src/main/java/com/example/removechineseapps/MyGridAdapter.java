@@ -14,6 +14,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder> {
@@ -34,7 +36,7 @@ public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyGridAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final App obj=list.get(position);
         holder.textView.setText(obj.getApp_name());
         //add image resourec
@@ -48,7 +50,9 @@ public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder
         }
         holder.imageView.setImageBitmap(bmp);*/
 
-        holder.imageView.setImageResource(R.mipmap.ic_launcher);
+        Picasso.get().load(obj.getApp_logo()).into(holder.imageView);
+
+        holder.imageView.setImageResource(R.drawable.loading);
         //onclick listener
         holder.btn.setOnClickListener(new View.OnClickListener() {
             @Override
