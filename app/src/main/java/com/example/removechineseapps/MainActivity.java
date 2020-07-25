@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -51,16 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-            RecyclerView recyclerView=findViewById(R.id.recycler);
-            //pass app_to_be_removed publishing
-            MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new GridLayoutManager(context,3));
-            Log.i("status","list obtained");
-
-
-
+            displayDataInRecycler(apps_to_be_removed,false);
 
     }
 
@@ -114,14 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 if(apps_list.size()==size){
 
 
-                    RecyclerView recyclerView=findViewById(R.id.recycler);
-                    //pass app_to_be_removed publishing
-                    MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
-                    recyclerView.setHasFixedSize(true);
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.setLayoutManager(new GridLayoutManager(context,3));
-                    Log.i("status","list obtained");
-
+                    displayDataInRecycler(apps_to_be_removed,true);
                     progressDoalog.dismiss();
 
                 }
@@ -162,5 +147,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return false;
+    }
+
+    private void displayDataInRecycler(List<App> list_to_be_displayed,Boolean checkSize){
+        if(list_to_be_displayed.size()==0 && checkSize){
+            TextView textView=findViewById(R.id.info_text_feild);
+            textView.setText("Your Phone is" +"\n"+"\uD83D\uDC09 Free");
+            RecyclerView recyclerView = findViewById(R.id.recycler);
+            recyclerView.setVisibility(View.INVISIBLE);
+        }
+
+        else {
+            RecyclerView recyclerView = findViewById(R.id.recycler);
+            //pass app_to_be_removed publishing
+            MyGridAdapter adapter = new MyGridAdapter(list_to_be_displayed, context);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new GridLayoutManager(context, 3));
+        }
+
     }
 }
