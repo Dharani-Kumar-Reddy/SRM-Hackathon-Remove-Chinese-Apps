@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
     <TextView
         android:id="@+id/info_text_feild"
@@ -32,9 +33,47 @@
         android:layout_height="wrap_content"
         android:text="Scan Now"
         android:onClick="scan"
-        android:layout_centerInParent="true"
-        android:layout_alignParentBottom="true">
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/counter_field">
 
     </Button>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/counter_field"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:cardElevation="5dp"
+        android:layout_margin="5dp"
+        app:cardCornerRadius="5dp"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:text="Total No of Chinese Apps Uninstalled"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textSize="25sp"
+                android:textColor="#000000">
+
+            </TextView>
+            <TextView
+                android:id="@+id/text_feild_counter"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:text=": 350"
+                android:textSize="30sp"
+                android:gravity="center_vertical"
+                android:textColor="#000000"
+                android:textStyle="bold">
+
+            </TextView>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>

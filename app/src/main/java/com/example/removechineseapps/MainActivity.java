@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     final List<App> apps_to_be_removed=new ArrayList<>();
     final List<App> apps_list=new ArrayList<>();
+    TextView textView;
+    DatabaseReference myRef;
     int size=100000;//for handling async task
     Context context;
     Button btn;
@@ -40,6 +42,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context=this;
         setContentView(R.layout.activity_main);
+        textView=findViewById(R.id.text_feild_counter);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference();
+        myRef.child("app_uninstalled").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String value=snapshot.getValue(String.class);
+                textView.setText(": "+value);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
     @Override
@@ -49,8 +66,13 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<apps_to_be_removed.size();i++){
             if(!isAppPresent(apps_to_be_removed.get(i).getApp_package())){
                 apps_to_be_removed.remove(i);
+                int val=Integer.parseInt(textView.getText().toString().substring(2));
+
+                myRef.child("app_uninstalled").setValue(Integer.toString(val+1));
+
             }
         }
+
 
             displayDataInRecycler(apps_to_be_removed,false);
 
@@ -67,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
         progressDoalog.setTitle("Scanning Your device");
         progressDoalog.show();
         //get data and check for each app in device
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference();
+
 
         Log.i("status","starting size");
 
@@ -101,8 +122,6 @@ public class MainActivity extends AppCompatActivity {
                     apps_to_be_removed.add(app_obj);
                     Log.i("status_appsremoved",Integer.toString(apps_list.size()));
                 }
-                Log.i("status","obj obtained");
-                Log.i("status_apps_size",Integer.toString(apps_list.size()));
                 if(apps_list.size()==size){
 
 
