@@ -11,9 +11,11 @@ public class App {
         this.app_package = app_package;
     }
 
-    public App() {
-    }
 
+public App()
+{
+
+}
     public String getApp_logo() {
         return app_logo;
     }

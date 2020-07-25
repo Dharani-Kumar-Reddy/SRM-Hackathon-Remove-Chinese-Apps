@@ -3,7 +3,9 @@ package com.example.removechineseapps;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.Toast;
+
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     final List<App> apps_to_be_removed=new ArrayList<>();
     final List<App> apps_list=new ArrayList<>();
     int size=100000;//for handling async task
+    Toolbar toolbar;
     Context context;
     Button btn;
     @Override
@@ -39,9 +43,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context=this;
         setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        scan();
 
     }
-    @Override
     protected void onResume() {
         super.onResume();
         Log.i("lifecycle_test","resume");
@@ -51,13 +57,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-            RecyclerView recyclerView=findViewById(R.id.recycler);
-            //pass app_to_be_removed publishing
-            MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(adapter);
-            recyclerView.setLayoutManager(new GridLayoutManager(context,3));
-            Log.i("status","list obtained");
+        RecyclerView recyclerView=findViewById(R.id.recycler);
+        //pass app_to_be_removed publishing
+        MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(context,3));
+        Log.i("status","list obtained");
 
 
 
@@ -68,8 +74,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-    public void scan(View v){
+    public void scan(){
         final ProgressDialog progressDoalog = new ProgressDialog(MainActivity.this);
         progressDoalog.setMessage("Its loading....");
         progressDoalog.setTitle("Scanning Your device");
@@ -119,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                     MyGridAdapter adapter=new MyGridAdapter(apps_to_be_removed,context);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setAdapter(adapter);
-                    recyclerView.setLayoutManager(new GridLayoutManager(context,3));
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
                     Log.i("status","list obtained");
 
                     progressDoalog.dismiss();
@@ -148,19 +153,17 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        v.findViewById(R.id.btn_scan).setVisibility(View.INVISIBLE);
+
     }
-
-
     private Boolean isAppPresent(String uri){
-            PackageManager pm = getPackageManager();
-            try {
-                pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-                return true;
-            }
-            catch (PackageManager.NameNotFoundException e) {
-            }
+        PackageManager pm = getPackageManager();
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            return true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+        }
 
-            return false;
+        return false;
     }
 }

@@ -90,7 +90,7 @@ public class MyGridAdapter extends RecyclerView.Adapter<MyGridAdapter.ViewHolder
             super(itemView);
             this.btn=itemView.findViewById(R.id.btn_uninstall);
             this.imageView=itemView.findViewById(R.id.app_icon_field);
-            this.textView=itemView.findViewById(R.id.app_name_fiels);
+            this.textView=itemView.findViewById(R.id.app_name_field);
             Log.i("INside adapter","inside4");
         }
     }
