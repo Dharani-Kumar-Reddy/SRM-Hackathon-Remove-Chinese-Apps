@@ -17,13 +17,37 @@
         android:gravity="center">
 
     </TextView>
+    <LinearLayout
+        android:id="@+id/to_hide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/app_logo">
+
+        </ImageView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Click on Scan Now To remove Chinese Apps from your Device"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:textStyle="italic"
+            android:textColor="#000000">
+
+        </TextView>
+    </LinearLayout>
+
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/btn_scan"
-       >
+        android:layout_alignBottom="@id/btn_scan">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -40,14 +64,13 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/counter_field"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         app:cardElevation="5dp"
-        android:layout_margin="5dp"
         app:cardCornerRadius="5dp"
         android:layout_alignParentBottom="true">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="0dp"
@@ -56,7 +79,7 @@
                 android:text="Total No of Chinese Apps Uninstalled"
                 android:gravity="center"
                 android:textAlignment="center"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textColor="#000000">
 
             </TextView>
@@ -65,8 +88,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
-                android:text=": 350"
-                android:textSize="30sp"
+                android:text=": 0"
+                android:textSize="25sp"
                 android:gravity="center_vertical"
                 android:textColor="#000000"
                 android:textStyle="bold">

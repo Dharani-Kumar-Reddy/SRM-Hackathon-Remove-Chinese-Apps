@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,14 +68,12 @@ public class MainActivity extends AppCompatActivity {
             if(!isAppPresent(apps_to_be_removed.get(i).getApp_package())){
                 apps_to_be_removed.remove(i);
                 int val=Integer.parseInt(textView.getText().toString().substring(2));
-
                 myRef.child("app_uninstalled").setValue(Integer.toString(val+1));
 
             }
         }
 
-
-            displayDataInRecycler(apps_to_be_removed,false);
+        displayDataInRecycler(apps_to_be_removed,false);
 
     }
 
@@ -90,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         progressDoalog.show();
         //get data and check for each app in device
 
+
+        LinearLayout linearLayout=findViewById(R.id.to_hide);
+        linearLayout.setVisibility(View.INVISIBLE);
 
         Log.i("status","starting size");
 
@@ -123,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("status_appsremoved",Integer.toString(apps_list.size()));
                 }
                 if(apps_list.size()==size){
-
 
                     displayDataInRecycler(apps_to_be_removed,true);
                     progressDoalog.dismiss();
@@ -171,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     private void displayDataInRecycler(List<App> list_to_be_displayed,Boolean checkSize){
         if(list_to_be_displayed.size()==0 && checkSize){
             TextView textView=findViewById(R.id.info_text_feild);
-            textView.setText("Your Phone is" +"\n"+"\uD83D\uDC09 Free");
+            textView.setText("No Chinese Apps Found in your Phone\nYour phone is free from Bugs \uD83D\uDC09");
             RecyclerView recyclerView = findViewById(R.id.recycler);
             recyclerView.setVisibility(View.INVISIBLE);
         }
